@@ -8,62 +8,38 @@ const {
 const users = [
 
     {
-        username: 'William',
-        password: 'whocares123'
+        username: 'JT Gutierrez',
+        password: 'Letsblog12345'
     },
-
     {
-        username: 'Richard',
-        password: 'ilikemath'
-    },
-
-    {
-        username: 'Bill',
-        password: 'mottsfruitsnacks'
-    },
-
-    {
-        username: 'Jake',
-        password: 'fuckthis'
-    },
-
+    username: 'Ali Andrade',
+    password: 'Fastblogger22'
+    }
 ]
 
 const posts = [
 
     {
-        title: 'why motts are great',
-        content: 'they just are',
-        user_id: 2
-    },
-
-    {
-        title: 'hey stranger',
-        content: 'pretty cool post, huh?',
+        title: 'Why coding is cool',
+        content: 'It just is',
         user_id: 1
     },
 
     {
-        title: 'im tired and sad',
-        content: 'i wonder if this window opens',
-        user_id: 3
-    },
+        title: 'Do you like JavaScript?',
+        content: 'Hard to start, easy to get used to',
+        user_id: 1
+    }
 
 ]
 
 const comments = [
 
     {
-        content: 'this is a horrible stream',
+        content: 'this is a comment',
         user_id: 2,
         post_id: 1
-    },
-
-    {
-        content: 'im hungry and sad',
-        user_id: 3,
-        post_id: 1
-    },
+    }
 
 ]
 
