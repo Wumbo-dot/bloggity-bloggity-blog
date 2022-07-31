@@ -1,56 +1,23 @@
-//requirements
-const {
-    User,
-    Comment,
-    Post
-} = require('../models');
+const seedPosts = require('./post-seeds');
+const seedUsers = require('./user-seeds');
+const seedComments = require('./comment-seeds');
 
-const users = [
+const sequelize = require('../config/connection');
 
-    {
-        username: 'JT Gutierrez',
-        password: 'Letsblog12345'
-    },
-    {
-    username: 'Ali Andrade',
-    password: 'Fastblogger22'
-    }
-]
+const seedAll = async () => {
+await sequelize.sync({ force: true });
+    console.log('\n----- DATABASE SYNCED -----\n');
 
-const posts = [
+await seedUsers();
+    console.log('\n----- USERS SEEDED -----\n');
 
-    {
-        title: 'Why coding is cool',
-        content: 'It just is',
-        user_id: 1
-    },
+await seedPosts();
+    console.log('\n----- POSTS SEEDED -----\n');
 
-    {
-        title: 'Do you like JavaScript?',
-        content: 'Hard to start, easy to get used to',
-        user_id: 1
-    }
+await seedComments();
+    console.log('\n----- COMMENTS SEEDED -----\n');
 
-]
+process.exit(0);
+};
 
-const comments = [
-
-    {
-        content: 'this is a comment',
-        user_id: 2,
-        post_id: 1
-    }
-
-]
-
-
-const plantSeeds = async () => {
-
-
-    await User.bulkCreate(users, { individualHooks: true });
-    await Post.bulkCreate(posts);
-    await Comment.bulkCreate(comments);
-
-}
-
-plantSeeds();
+seedAll();

@@ -1,45 +1,52 @@
-//requirements
-const Sequelize = require('sequelize');
-const sequelizeConnection = require('../config/sequlizeConnection');
+const { Model, DataTypes } = require('sequelize');
+const sequelize = require('../config/connection');
 
-const Comment = sequelizeConnection.define('comment', {
-    id:{
-        type: Sequelize.INTEGER,
+//Defines 'Comment' as a model
+class Comment extends Model {};
+
+//Initialize Comment Model
+Comment.init({
+    id : {
+        type: DataTypes.INTEGER,
+        allowNull: false,
         primaryKey: true,
-        autoIncrement: true,
-        allowNull: false
+        autoIncrement: true,   
     },
-    content: {
-        type: Sequelize.TEXT,
-        allowNull: false
-    },
-    post_id: {
-        type: Sequelize.INTEGER,
+
+    commentary: {
+        type: DataTypes.STRING,
         allowNull: false,
-        reference: {
-            model: 'Post',
-            key: 'id'
-        }
     },
+
     user_id: {
-        type: Sequelize.INTEGER,
-        allowNull: false,
-        reference: {
-            model: 'User',
+        type: DataTypes.INTEGER,
+        references: {
+            model: 'user',
+            key: 'id' 
+        }
+    },
+    
+    post_id: {
+        type: DataTypes.INTEGER,
+        references: {
+            model: 'post',
             key: 'id'
         }
-    }
+    },
+
+    date_created: {
+        type: DataTypes.DATE,
+        allowNull: false,
+        defaultValue: DataTypes.NOW, 
+    },  
 },
 {
-    sequelize:sequelizeConnection,
-    timestamp: true,
+    sequelize,
+    timestamps: false,
     freezeTableName: true,
     underscored: true,
-    modelName: 'comments'
-});
-
-User.beforeCreate (async user => {
-    user.password = await bcrypt.hash(user.password, 10);
-})
+    modelName: 'comment',
+}
+);
 
 module.exports = Comment;

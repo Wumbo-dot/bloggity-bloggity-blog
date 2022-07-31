@@ -1,27 +1,32 @@
-const commentFormHandler = async function(event) {
+async function commentFormHandler(event) {
     event.preventDefault();
 
-    const postId = document.querySelector('#post-id').dataset.postId;
-    const content = document.querySelector('textarea[name="comment-body"]').value;
+    // we need to declare two variables when the form is submitted: the post id from the URL and the value of the <textarea> element
+    const commentary = document.querySelector('#comment-body').value.trim();
 
-    console.log('post id: ', postId);
-    console.log('content: ', content);
+    const post_id = window.location.toString().split('/')[
+    window.location.toString().split('/').length - 1
+    ];
 
-    if (content) {
-    await fetch('/api/comment', {
+    if (commentary) {
+        const response = await fetch('/api/comment', {
         method: 'POST',
         body: JSON.stringify({
-        post_id: postId,
-        content
+            post_id,
+            commentary
         }),
         headers: {
-        'Content-Type': 'application/json'
+            'Content-Type': 'application/json'
         }
-    });
+        });
 
-    document.location.reload();
+        if (response.ok) {
+        document.location.reload();
+        } else {
+        alert(response.statusText);
+        }
     }
-};
+}
 
-const commentBtn = document.querySelector('#comment-btn');
-if (commentBtn) commentBtn.addEventListener('click', commentFormHandler);
+commentForm = document.querySelector("#comment-form")
+if (commentForm){commentForm.addEventListener("submit", commentFormHandler);}
