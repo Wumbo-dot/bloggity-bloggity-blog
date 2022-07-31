@@ -1,3 +1,4 @@
+//log out procedures
 const logout = async function() {
     const response = await fetch('/api/user/logout', {
     method: 'POST',
@@ -11,9 +12,4 @@ const logout = async function() {
     }
 };
 
-console.log('running logout script');
-
-const logoutBtn = document.querySelector('#logout-link');
-if (logoutBtn) {
-    logoutBtn.addEventListener('click', logout);
-}
+document.querySelector('#logout').addEventListener('click', logout);

@@ -1,57 +1,137 @@
 const router = require('express').Router();
-const { Post } = require('../../models/');
+const { Post, Comment, User } = require('../../models/');
 const withAuth = require('../../utils/auth');
 
-router.post('/', withAuth, async (req, res) => {
-const body = req.body;
-
-try {
-    console.log(body);
-    const newPost = await Post.create({ ...body, user_id: req.session.userId });
-    res.json(newPost);
-} catch (err) {
-    console.log(err);
+// GET all posts
+router.get('/', (req, res) => {
+Post.findAll({
+    attributes: [
+    'id',
+    'title',
+    'contents',
+    'date_created'
+    ],
+    order: [['date_created', 'DESC']],
+    include: [
+    {
+        model: Comment,
+        attributes: ['id', 'commentary', 'post_id', 'user_id', 'date_created'],
+        include: {
+        model: User,
+        attributes: ['username']
+        }
+    },
+    {
+        model: User,
+        attributes: ['username']
+    }
+    ]
+})
+    .then(dbPostData => res.json(dbPostData))
+    .catch(err => {
     console.log(err);
     res.status(500).json(err);
-}
+    });
 });
 
-router.put('/:id', withAuth, async (req, res) => {
-try {
-    const [affectedRows] = await Post.update(req.body, {
+// GET/READ a single post
+router.get('/:id', (req, res) => {
+Post.findOne({
     where: {
-        id: req.params.id,
+    id: req.params.id
     },
-    });
-
-    if (affectedRows > 0) {
-    res.status(200).end();
-    } else {
-    res.status(404).end();
+    attributes: [
+    'id',
+    'title',
+    'contents',
+    'date_created'
+    ],
+    include: [
+    {
+        model: Comment,
+        attributes: ['id', 'commentary', 'post_id', 'user_id', 'date_created'],
+        include: {
+        model: User,
+        attributes: ['username']
+        }
+    },
+    {
+        model: User,
+        attributes: ['username']
     }
-} catch (err) {
+    ]
+})
+    .then(dbPostData => {
+    if (!dbPostData) {
+        res.status(404).json({ message: 'No post found with this id' });
+        return;
+    }
+    res.json(dbPostData);
+    })
+    .catch(err => {
     console.log(err);
     res.status(500).json(err);
-}
+    });
 });
 
-router.delete('/:id', withAuth, async (req, res) => {
-try {
-    const [affectedRows] = Post.destroy({
-    where: {
-        id: req.params.id,
-    },
-    });
-
-    if (affectedRows > 0) {
-    res.status(200).end();
-    } else {
-    res.status(404).end();
-    }
-} catch (err) {
+//POST/CREATE
+router.post('/', withAuth, (req, res) => {
+Post.create({
+    title: req.body.title,
+    contents: req.body.contents,
+    user_id: req.session.user_id
+})
+    .then(dbPostData => res.json(dbPostData))
+    .catch(err => {
     console.log(err);
     res.status(500).json(err);
-}
+    });
+});
+
+//PUT/UPDATE
+router.put('/:id', withAuth, (req, res) => {
+Post.update(
+    {
+    title: req.body.title,
+    contents: req.body.contents
+    },
+    {
+    where: {
+        id: req.params.id
+    }
+    }
+)
+    .then(dbPostData => {
+    if (!dbPostData) {
+        res.status(404).json({ message: 'No post found with this id' });
+        return;
+    }
+    res.json(dbPostData);
+    })
+    .catch(err => {
+    console.log(err);
+    res.status(500).json(err);
+    });
+});
+
+//DELETE 
+router.delete('/:id', withAuth, (req, res) => {
+Post.destroy({
+    where: {
+    id: req.params.id
+    }
+})
+    .then(dbPostData => {
+    if (!dbPostData) {
+        res.status(404).json({ message: 'No post found with this id' });
+        return;
+    }
+    res.json(dbPostData);
+    })
+    .catch(err => {
+    console.log(err);
+    res.status(500).json(err);
+    });
 });
 
 module.exports = router;

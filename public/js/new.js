@@ -1,28 +1,39 @@
-const newFormHandler = async function(event) {
-    event.preventDefault();
 
-    const title = document.querySelector('#title-field').value.trim();
-    const content = document.querySelector('#content-field').value.trim();
 
-    if (!(title && content)) {
-    alert('Invalid form. Please fill out all required fields');
-    return;
-    }
+const addPostBtn = document.querySelector('#add-post-btn');
+const createPostCd = document.querySelector('#create-post-card');
 
-    await fetch(`/api/post`, {
-    method: 'POST',
-    body: JSON.stringify({
-        title,
-        content,
-    }),
-    headers: { 'Content-Type': 'application/json' },
-    });
-
-    document.location.replace('/dashboard');
+function toggleHide(event) {
+    createPostCd.classList.remove('hide');
+    addPostBtn.classList.add('hide');
 };
 
-console.log('running new post script');
+// file that the dashboard uses to create new posts
+async function newFormHandler(event) {
+    event.preventDefault();
 
-document
-    .querySelector('#submit-btn')
-    .addEventListener('click', newFormHandler);
+    const titleEl = document.querySelector('#post-title').value;
+    const contentsEl = document.querySelector('#post-content').value;
+
+    const response = await fetch('/api/post', {
+    method: 'POST',
+    body: JSON.stringify({
+        title:titleEl,
+        contents:contentsEl
+    }),
+    headers: {
+        'Content-Type': 'application/json'
+    }
+    });
+
+    if (response.ok) {
+    addPostBtn.classList.remove('hide');
+    createPostCd.classList.add('hide');
+    document.location.replace('/dashboard');
+    } else {
+    alert(response.statusText);
+    }
+}
+
+document.querySelector('.new-post-form').addEventListener('submit', newFormHandler);
+addPostBtn.addEventListener('click', toggleHide) 

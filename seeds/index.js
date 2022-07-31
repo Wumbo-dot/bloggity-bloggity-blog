@@ -1,80 +1,23 @@
-//requirements
-const {
-    User,
-    Comment,
-    Post
-} = require('../models');
+const seedPosts = require('./post-seeds');
+const seedUsers = require('./user-seeds');
+const seedComments = require('./comment-seeds');
 
-const users = [
+const sequelize = require('../config/connection');
 
-    {
-        username: 'William',
-        password: 'whocares123'
-    },
+const seedAll = async () => {
+await sequelize.sync({ force: true });
+    console.log('\n----- DATABASE SYNCED -----\n');
 
-    {
-        username: 'Richard',
-        password: 'ilikemath'
-    },
+await seedUsers();
+    console.log('\n----- USERS SEEDED -----\n');
 
-    {
-        username: 'Bill',
-        password: 'mottsfruitsnacks'
-    },
+await seedPosts();
+    console.log('\n----- POSTS SEEDED -----\n');
 
-    {
-        username: 'Jake',
-        password: 'fuckthis'
-    },
+await seedComments();
+    console.log('\n----- COMMENTS SEEDED -----\n');
 
-]
+process.exit(0);
+};
 
-const posts = [
-
-    {
-        title: 'why motts are great',
-        content: 'they just are',
-        user_id: 2
-    },
-
-    {
-        title: 'hey stranger',
-        content: 'pretty cool post, huh?',
-        user_id: 1
-    },
-
-    {
-        title: 'im tired and sad',
-        content: 'i wonder if this window opens',
-        user_id: 3
-    },
-
-]
-
-const comments = [
-
-    {
-        content: 'this is a horrible stream',
-        user_id: 2,
-        post_id: 1
-    },
-
-    {
-        content: 'im hungry and sad',
-        user_id: 3,
-        post_id: 1
-    },
-
-]
-
-
-const plantSeeds = async () => {
-
-
-    await User.bulkCreate(users, { individualHooks: true });
-    await Post.bulkCreate(posts);
-    await Comment.bulkCreate(comments);
-
-}
-
-plantSeeds();
+seedAll();

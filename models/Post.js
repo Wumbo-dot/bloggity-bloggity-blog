@@ -1,37 +1,52 @@
-//requirements
-const Sequelize = require('sequelize');
-const sequelizeConnection = require('../config/sequlizeConnection');
+const { Model, DataTypes } = require('sequelize');
+const sequelize = require('../config/connection');
 
-const Post = sequelizeConnection.define('post', {
-    id:{
-        type: Sequelize.INTEGER,
+//Defines 'Post' as a model
+class Post extends Model {}
+
+//Creates a new model for a Post
+Post.init({
+    //Column definitions for the model(ID, TITLE, CONTENTS, USER_ID, dateCreated)
+    id: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
         primaryKey: true,
         autoIncrement: true,
-        allowNull: false
-    },
-    content: {
-        type: Sequelize.TEXT,
-        allowNull: false
-    },
+    }, 
+
     title: {
-        type: Sequelize.STRING,
-        allowNull: false
+        type: DataTypes.STRING,
+        allowNull: false,  
     },
-    user_id: {
-        type: Sequelize.INTEGER,
+
+    contents: {
+        type: DataTypes.STRING,
         allowNull: false,
-        reference: {
-            mode: 'User',
-            key: 'id'
+    },
+
+    user_id: {
+        type: DataTypes.INTEGER,
+        references: {
+            model: 'user',
+            key: 'id' 
         }
-    }
+    }, 
+
+    date_created: {
+        type: DataTypes.DATE,
+        allowNull: false,
+        defaultValue: DataTypes.NOW, 
+    },  
 },
+
 {
-    sequelize:sequelizeConnection,
-    timestamp: true,
+    //Sequelize Options for this model
+    sequelize,
+    timestamps: false,
     freezeTableName: true,
     underscored: true,
-    modelName: 'posts'
-});
+    modelName: 'post',
+}
+);
 
 module.exports = Post;
